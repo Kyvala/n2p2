@@ -70,6 +70,13 @@ if ((argc < 2) || (argc > 3))
     {
         prediction.log << "Calculating NNP prediction...\n";
         prediction.predict();
+        s.comEnergy.push_back(s.energy);
+        for (vector<Atom>::iterator it = s.atoms.begin(); it != s.atoms.end(); ++it)
+        {
+            it->comFx.push_back(it->f[0]);
+            it->comFy.push_back(it->f[1]);
+            it->comFz.push_back(it->f[2]);
+        }
         prediction.log << "\n";
         prediction.log << "-----------------------------------------"
                           "--------------------------------------\n";
