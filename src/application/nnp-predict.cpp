@@ -68,6 +68,7 @@ if ((argc < 2) || (argc > 3))
     prediction.calSymFuct();
     for(int committeeMember = 1; committeeMember <= committee; committeeMember++)
     {
+        prediction.formatWeightsFilesShort = std::to_string(committeeMember) + "_weights.%03zu.data",
         prediction.log << "Calculating NNP prediction...\n";
         prediction.predict();
         s.comEnergy.push_back(s.energy);
