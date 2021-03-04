@@ -118,6 +118,12 @@ struct Atom
     Vec3D                    r;
     /// Force vector calculated by neural network.
     Vec3D                    f;
+    /// Force in x-axis array for committee.
+    std::vector<double>      comFx; 
+    /// Force in y-axis array for committee.
+    std::vector<double>      comFy; 
+    /// Force in z-axis array for committee.
+    std::vector<double>      comFz; 
     /// Reference force vector from data set.
     Vec3D                    fRef;
     /// List of unique neighbor indices (don't count multiple PBC images).
@@ -253,6 +259,11 @@ struct Atom
      * @return Lines with atom information.
      */
     std::vector<std::string> info() const;
+    /** Calculate average force for committee.
+     *
+     * @return Average force for committee.
+     */
+    double                   averageForce (std::vector<double> force) const;
 };
 
 inline bool Atom::Neighbor::operator!=(Atom::Neighbor const& rhs) const

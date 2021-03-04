@@ -514,3 +514,13 @@ vector<string> Atom::Neighbor::info() const
 
     return v;
 }
+
+double Atom::averageForce (std::vector<double> force) const
+{
+    double sum{0.0};
+    for (std::vector<double>::iterator it = std::begin(force);it != std::end(force); ++it)
+    {
+        sum += *it;
+    }
+    return sum/force.size();
+}
