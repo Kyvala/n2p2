@@ -70,7 +70,7 @@ void Prediction::predict()
     setupNeuralNetworkWeights(formatWeightsFilesShort,
                               formatWeightsFilesCharge);
     setupSymmetryFunctionStatistics(false, false, true, false);
-    structure.calculateNeighborList(maxCutoffRadius);
+    calculateAtomicNeuralNetworks(structure, true);
     calculateEnergy(structure);
     if (nnpType == NNPType::SHORT_CHARGE_NN) calculateCharge(structure);
     calculateForces(structure);
