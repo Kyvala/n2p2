@@ -330,6 +330,11 @@ struct Structure
      * @return Lines with structure information.
      */
     std::vector<std::string> info() const;
+    /** Calculate average energy for committee.
+     *
+     * @return Average energy for committee.
+     */
+    double                   averageEnergy();
 };
 
 }
