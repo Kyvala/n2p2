@@ -31,11 +31,13 @@ int main(int argc, char* argv[])
 {
     bool structureInfo = false;
 
-    if (argc != 2)
+if ((argc < 2) || (argc > 3))
     {
         cout << "USAGE: " << argv[0] << " <info>\n"
              << "       <info> ... Write structure information for debugging "
                 "to \"structure.out (0/1)\".\n"
+             << "       <committee> ... the number of committee members, default = 1\n"
+
              << "       Execute in directory with these NNP files present:\n"
              << "       - input.data (structure file)\n"
              << "       - input.nn (NNP settings)\n"
@@ -45,6 +47,9 @@ int main(int argc, char* argv[])
     }
 
     structureInfo = (bool)atoi(argv[1]);
+    int committee{1};
+    if(argc == 3)
+        committee = (int)atoi(argv[2]);
 
     ofstream logFile;
     logFile.open("nnp-predict.log");
@@ -60,26 +65,49 @@ int main(int argc, char* argv[])
     Structure& s = prediction.structure;
     prediction.log << strpr("Structure contains %d atoms (%d elements).\n",
                             s.numAtoms, s.numElements);
-    prediction.log << "Calculating NNP prediction...\n";
-    prediction.predict();
-    prediction.log << "\n";
-    prediction.log << "-----------------------------------------"
-                      "--------------------------------------\n";
-    prediction.log << strpr("NNP energy: %16.8E\n",
-                            prediction.structure.energy);
-    prediction.log << "\n";
-    prediction.log << "NNP forces:\n";
-    for (vector<Atom>::const_iterator it = s.atoms.begin();
-         it != s.atoms.end(); ++it)
+    prediction.calSymFuct();
+    for(int committeeMember = 1; committeeMember <= committee; committeeMember++)
     {
-        prediction.log << strpr("%10zu %2s %16.8E %16.8E %16.8E\n",
-                                it->index + 1,
-                                prediction.elementMap[it->element].c_str(),
-                                it->element,
-                                it->f[0],
-                                it->f[1],
-                                it->f[2]);
+        prediction.log << "Calculating NNP prediction...\n";
+        prediction.predict();
+        prediction.log << "\n";
+        prediction.log << "-----------------------------------------"
+                          "--------------------------------------\n";
+        prediction.log << strpr("NNP energy: %16.8E\n",
+                                prediction.structure.energy);
+        prediction.log << "\n";
+        prediction.log << "NNP forces:\n";
+        for (vector<Atom>::const_iterator it = s.atoms.begin();
+             it != s.atoms.end(); ++it)
+        {
+            prediction.log << strpr("%10zu %2s %16.8E %16.8E %16.8E\n",
+                                    it->index + 1,
+                                    prediction.elementMap[it->element].c_str(),
+                                    it->element,
+                                    it->f[0],
+                                    it->f[1],
+                                    it->f[2]);
+        }
     }
+    if(committee != 1)
+    {
+        prediction.log << "-----------------------------------------"
+                          "--------------------------------------\n";
+        prediction.log << strpr("Committee has %i members\n", committee);
+        prediction.log << strpr("Committee NNP energy: %16.8E\n",
+                            s.averageEnergy());
+        for (vector<Atom>::const_iterator it = s.atoms.begin();
+             it != s.atoms.end(); ++it)
+        {
+            prediction.log << strpr("%10zu %2s %16.8E %16.8E %16.8E\n",
+                                    it->index + 1,
+                                    prediction.elementMap[it->element].c_str(),
+                                    it->element,
+                                    it->averageForce(it->comFx),
+                                    it->averageForce(it->comFy),
+                                    it->averageForce(it->comFz));
+        }
+    }    
     prediction.log << "-----------------------------------------"
                       "--------------------------------------\n";
     prediction.log << "Writing output files...\n";
