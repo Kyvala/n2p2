@@ -30,6 +30,7 @@ public:
     Prediction();
     void readStructureFromFile(std::string const& fileName = "input.data");
     void setup();
+    void calSymFuct();
     void predict();
 
     std::string fileNameSettings;

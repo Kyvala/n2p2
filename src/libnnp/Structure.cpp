@@ -885,7 +885,7 @@ vector<string> Structure::info() const
     return v;
 }
 
-double Structure::averageEnergy ()
+double Structure::averageEnergy()
 {
     double sum{0.0};
     for (std::vector<double>::iterator it = std::begin(comEnergy);it != std::end(comEnergy); ++it){

@@ -36,9 +36,16 @@ void Prediction::setup()
     loadSettingsFile(fileNameSettings);
     setupGeneric();
     setupSymmetryFunctionScaling(fileNameScaling);
-    setupNeuralNetworkWeights(formatWeightsFilesShort,
-                              formatWeightsFilesCharge);
-    setupSymmetryFunctionStatistics(false, false, true, false);
+}
+
+void Prediction::calSymFuct()
+{
+    structure.calculateNeighborList(maxCutoffRadius);
+#ifdef N2P2_NO_SF_GROUPS
+    calculateSymmetryFunctions(structure, true);
+#else
+    calculateSymmetryFunctionGroups(structure, true);
+#endif    
 }
 
 void Prediction::readStructureFromFile(string const& fileName)
@@ -60,13 +67,10 @@ void Prediction::readStructureFromFile(string const& fileName)
 
 void Prediction::predict()
 {
+    setupNeuralNetworkWeights(formatWeightsFilesShort,
+                              formatWeightsFilesCharge);
+    setupSymmetryFunctionStatistics(false, false, true, false);
     structure.calculateNeighborList(maxCutoffRadius);
-#ifdef N2P2_NO_SF_GROUPS
-    calculateSymmetryFunctions(structure, true);
-#else
-    calculateSymmetryFunctionGroups(structure, true);
-#endif
-    calculateAtomicNeuralNetworks(structure, true);
     calculateEnergy(structure);
     if (nnpType == NNPType::SHORT_CHARGE_NN) calculateCharge(structure);
     calculateForces(structure);
