@@ -74,6 +74,8 @@ struct Structure
     int                      pbc[3];
     /// Potential energy determined by neural network.
     double                   energy;
+    /// Energy vector for committee.
+    std::vector<double>      comEnergy; 
     /// Reference potential energy.
     double                   energyRef;
     /// Charge determined by neural network potential.
